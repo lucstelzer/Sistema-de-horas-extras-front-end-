@@ -1,42 +1,43 @@
-const toggleButton = document.getElementById('toggle-sidebar');
-const sidebar = document.getElementById('sidebar');
-
-toggleButton.addEventListener('click', () => {
-    sidebar.classList.toggle('open');
+document.getElementById('toggle-sidebar').addEventListener('click', function () {
+    document.querySelector('.sidebar').classList.toggle('open');
 });
-
-showpage('dashboard');
-
 function logout() {
     localStorage.removeItem('token');
     window.location.href = '/Trabalho Fortes/Trabalho Fortes ENG/Login/index.html';
 }
 
 document.getElementById('logout').addEventListener('click', logout);
+document.addEventListener('DOMContentLoaded', () => {
+    const approveBtn = document.querySelector('.approve-btn');
+    const rejectBtn = document.querySelector('.reject-btn');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
 
-document.querySelectorAll('.faq-item').forEach(item => {
-    item.addEventListener('click', () => {
-        const wasActive = item.classList.contains('active');
+    approveBtn.addEventListener('click', () => {
+        alert('Solicitação APROVADA! Enviando dados...');
+    });
 
-        document.querySelectorAll('.faq-item').forEach(i => {
-            i.classList.remove('active');
-        });
+    rejectBtn.addEventListener('click', () => {
+        alert('Solicitação REJEITADA! Enviando dados...');
+    });
 
-        if (!wasActive) {
-            item.classList.add('active');
-        }
+    prevBtn.addEventListener('click', () => {
+        alert('Voltando para a solicitação anterior (implementação real requer dados)');
+    });
+
+    nextBtn.addEventListener('click', () => {
+        alert('Avançando para a próxima solicitação (implementação real requer dados)');
     });
 });
-
 function carregarPerfil() {
 
-    const nomeSalvo = localStorage.getItem('tecnico_nome');
-    const emailSalvo = localStorage.getItem('tecnico_email');
-    const telefoneSalvo = localStorage.getItem('tecnico_telefone');
-    const matriculaSalva = localStorage.getItem('tecnico_matricula');
-    const funcaoSalva = localStorage.getItem('tecnico_funcao');
-    const setorSalvo = localStorage.getItem('tecnico_setor');
-    const unidadeSalva = localStorage.getItem('tecnico_unidade');
+    const nomeSalvo = localStorage.getItem('gestor_nome');
+    const emailSalvo = localStorage.getItem('gestor_email');
+    const telefoneSalvo = localStorage.getItem('gestor_telefone');
+    const matriculaSalva = localStorage.getItem('gestor_matricula');
+    const funcaoSalva = localStorage.getItem('gestor_funcao');
+    const setorSalvo = localStorage.getItem('gestor_setor');
+    const unidadeSalva = localStorage.getItem('gestor_unidade');
 
 
     if (nomeSalvo) {
@@ -61,10 +62,202 @@ function carregarPerfil() {
         document.getElementById('profile-unidade').textContent = unidadeSalva;
     }
 }
-
-
 carregarPerfil();
+const nomeInput = document.getElementById('edit-nome');
+const emailInput = document.getElementById('edit-email');
+const telefoneInput = document.getElementById('edit-telefone');
+const matriculaInput = document.getElementById('edit-matricula');
+const funcaoInput = document.getElementById('edit-funcao');
+const saveButton = document.getElementById('btn-salvar');
 
+function carregarFormulario() {
+    nomeInput.value = localStorage.getItem('gestor_nome') || "Nome do Gestor";
+    emailInput.value = localStorage.getItem('gestor_email') || "gestor.nome@fortes.com.br";
+    telefoneInput.value = localStorage.getItem('gestor_telefone') || "(27) 99999-9999";
+
+    matriculaInput.value = localStorage.getItem('gestor_matricula') || "45678";
+    funcaoInput.value = localStorage.getItem('gestor_funcao') || "Técnico de Manutenção Sênior";
+}
+
+function salvarFormulario() {
+    localStorage.setItem('gestor_nome', nomeInput.value);
+    localStorage.setItem('gestor_email', emailInput.value);
+    localStorage.setItem('gestor_telefone', telefoneInput.value);
+
+    localStorage.setItem('gestor_matricula', matriculaInput.value);
+    localStorage.setItem('gestor_funcao', funcaoInput.value);
+
+    localStorage.setItem('gestor_setor', localStorage.getItem('gestor_setor') || "Elétrica");
+    localStorage.setItem('gestor_unidade', localStorage.getItem('gestor_unidade') || "Matriz - Vitória");
+
+
+    alert('Perfil salvo com sucesso!');
+
+    window.location.href = '../Gestor/index.html';
+}
+carregarFormulario();
+
+if (saveButton) {
+    saveButton.addEventListener('click', salvarFormulario);
+}
+function enableAutoGrow(selector) {
+    const areas = document.querySelectorAll(selector);
+    areas.forEach(area => {
+        area.style.height = 'auto';
+        area.style.height = area.scrollHeight + 'px';
+
+        const onInput = e => {
+            const ta = e.target;
+            ta.style.height = 'auto';
+            ta.style.height = ta.scrollHeight + 'px';
+        };
+        area.addEventListener('input', onInput);
+    });
+}
+enableAutoGrow('.auto-grow');
+document.addEventListener('DOMContentLoaded', () => {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const notificationsContent = document.getElementById('notifications-content');
+
+    const mockNotifications = {
+        'pendentes': [
+            { id: 421, nome: "Nome Solicitação", data: "12/12/25", hora: "18:00 as 19:00", justificativa: "Justificativa de Pedro S." },
+            { id: 422, nome: "Outra Solicitação", data: "13/12/25", hora: "19:00 as 20:00", justificativa: "Justificativa de Maria P." }
+        ],
+        'aprovadas': [
+            { id: 419, nome: "Solicitação Antiga A", data: "01/12/25", hora: "14:00 as 15:00", justificativa: "Revisão OK" },
+            { id: 418, nome: "Solicitação Antiga B", data: "02/12/25", hora: "15:00 as 16:00", justificativa: "Confirmada" }
+        ],
+        'reprovadas': [
+            { id: 417, nome: "Solicitação Negada", data: "03/12/25", hora: "08:00 as 09:00", justificativa: "Fora do prazo" }
+        ]
+    };
+
+
+    const renderActionArea = (status, isDetailView = false) => {
+        if (status === 'pendentes') {
+            if (isDetailView) {
+                return `
+                    <div class="item-actions detail-actions">
+                        <button class="btn-action btn-approve" data-action="aprovar">Aprovar</button>
+                        <button class="btn-action btn-reject" data-action="reprovar">Reprovar</button>
+                        <button class="btn-action btn-back" data-action="voltar">Voltar</button>
+                    </div>
+                `;
+            } else {
+                // Botões de ação padrão para Pendentes
+                return `
+                    <div class="item-actions">
+                        <button class="btn-action btn-approve" data-action="aprovar">Aprovar</button>
+                        <button class="btn-action btn-reject" data-action="reprovar">Reprovar</button>
+                        <button class="btn-link" data-action="detalhes">Ver detalhes</button>
+                    </div>
+                `;
+            }
+        } else {
+            // Aprovadas/Reprovadas: SEM botões de ação, apenas indicador de status
+            const label = status === 'aprovadas' ? 'Aprovada' : 'Reprovada';
+            const statusClass = status === 'aprovadas' ? 'status-approved' : 'status-rejected';
+
+            return `
+                <div class="item-status-display ${statusClass}">
+                    <p>${label}</p>
+                    <button class="btn-link" data-action="detalhes">Ver detalhes</button>
+                </div>
+            `;
+        }
+    };
+
+    /**
+     * Cria o HTML para um único item de notificação.
+     */
+    const createNotificationHTML = (notification, status, isDetailView = false) => {
+        const justification = isDetailView
+            ? notification.justificativa + ' Completa' // Adiciona 'Completa' para a visualização detalhada
+            : notification.justificativa;
+
+        // Adicionando a classe 'hidden-detail' apenas para o item detalhado (inicialmente escondido)
+        const displayStyle = isDetailView ? 'style="display: none;"' : '';
+        const detailClass = isDetailView ? 'hidden-detail' : '';
+
+        return `
+            <div class="notification-item ${detailClass}" data-id="${notification.id}" data-status="${status}" ${displayStyle}>
+                <div class="item-details">
+                    <p class="item-number">Nº ${notification.id}</p>
+                    <p class="item-name">${notification.nome}</p>
+                    <p class="item-date-time">${notification.data}</p>
+                    <p class="item-date-time">${notification.hora}</p>
+                    <p class="item-justification">${justification}</p>
+                </div>
+                ${renderActionArea(status, isDetailView)} </div>
+        `;
+    };
+
+
+
+    const renderNotifications = (status) => {
+        const list = mockNotifications[status] || [];
+        let htmlContent = '';
+
+        list.forEach(item => {
+            htmlContent += createNotificationHTML(item, status);
+        });
+
+        if (status === 'pendentes' && list.length > 0) {
+            htmlContent += createNotificationHTML(list[0], status, true);
+        }
+
+        notificationsContent.innerHTML = htmlContent;
+    };
+
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const status = e.target.getAttribute('data-status');
+
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            renderNotifications(status);
+        });
+    });
+
+    notificationsContent.addEventListener('click', (e) => {
+        const target = e.target;
+        const action = target.getAttribute('data-action');
+        const item = target.closest('.notification-item');
+
+        if (!action) return;
+
+        const isPendingList = item && item.getAttribute('data-status') === 'pendentes';
+        const normalItems = notificationsContent.querySelectorAll('.notification-item:not(.hidden-detail)');
+        const detailItem = notificationsContent.querySelector('.notification-item.hidden-detail');
+
+        if (action === 'aprovar' || action === 'reprovar') {
+            if (isPendingList) {
+                alert(`${action === 'aprovar' ? 'Aprovação' : 'Reprovação'} simulada para ${item.querySelector('.item-name').textContent}.`);
+                item.remove();
+
+                if (item.classList.contains('hidden-detail')) {
+                    normalItems.forEach(n => n.style.display = 'flex');
+                }
+            }
+        } else if (action === 'detalhes') {
+            alert('Simulando visualização de Detalhes. Pressione "Voltar" para retornar.');
+
+            normalItems.forEach(n => n.style.display = 'none');
+            if (detailItem) detailItem.style.display = 'flex';
+
+        } else if (action === 'voltar') {
+            alert('Voltando para a lista normal.');
+            normalItems.forEach(n => n.style.display = 'flex');
+            if (detailItem) detailItem.style.display = 'none';
+        }
+    });
+
+    document.querySelector('.tab-button[data-status="pendentes"]').classList.add('active');
+    renderNotifications('pendentes');
+});
 const allNotifications = [
     { title: "Notificação sobre hora extra", body: "Sua solicitação #234 foi aprovado", date: "10:30", isRead: false },
     { title: "Notificação sobre folga no próximo feriado", body: "Sua solicitação #234 foi aprovado", date: "29/03", isRead: false },
@@ -79,6 +272,7 @@ const searchInput = document.getElementById('searchInput');
 
 function renderNotifications(notifications) {
     notificationListElement.innerHTML = '';
+
     if (notifications.length === 0) {
         notificationListElement.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Nenhuma notificação encontrada com o filtro atual.</p>';
         return;
@@ -149,48 +343,39 @@ function filterNotifications(filterType = null) {
 
     renderNotifications(filteredList);
 }
-document.querySelectorAll('.complete-task').forEach(link => {
-    link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const row = e.target.closest('tr');
-        const taskName = row.querySelector('td:nth-child(2)').textContent.trim();
 
-        const confirmationMessage = `Deseja realmente concluir a tarefa "${taskName}"? Esta ação é irreversível.`;
+document.addEventListener('DOMContentLoaded', () => {
+    filterNotifications('todas');
+});
+document.querySelectorAll('.faq-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const wasActive = item.classList.contains('active');
 
-        if (confirm(confirmationMessage)) {
+        document.querySelectorAll('.faq-item').forEach(i => {
+            i.classList.remove('active');
+        });
 
-            row.querySelector('td:nth-child(4)').innerHTML = '<span class="status-badge completed">Concluída</span>';
-            row.querySelector('td:nth-child(5)').textContent = '';
-            row.classList.remove('approved', 'pending');
-
-            const hoursText = row.querySelector('td:nth-child(3)').textContent;
-            const taskHours = parseFloat(hoursText.replace('hrs', '').trim());
-
-            let currentTotalText = pendingHoursElement.textContent.replace('hrs', '').trim();
-            let currentTotal = parseFloat(currentTotalText) || 0;
-
-            let newTotal = currentTotal - taskHours;
-            pendingHoursElement.textContent = `${newTotal}hrs`;
-
-            alert(`Tarefa "${taskName}" concluída e ${taskHours} horas deduzidas do total pendente.`);
+        if (!wasActive) {
+            item.classList.add('active');
         }
     });
 });
-function enableAutoGrow(selector) {
-    const areas = document.querySelectorAll(selector);
-    areas.forEach(area => {
-        area.style.height = 'auto';
-        area.style.height = area.scrollHeight + 'px';
-
-        const onInput = e => {
-            const ta = e.target;
-            ta.style.height = 'auto';
-            ta.style.height = ta.scrollHeight + 'px';
-        };
-        area.addEventListener('input', onInput);
-    });
+function darkModeToggle() {
+    if (document.body.classList.contains('dark-mode')) {
+        document.body.classList.remove('dark-mode');
+        localStorage.setItem('theme', 'light');
+    } else {
+        document.body.classList.add('dark-mode');
+        localStorage.setItem('theme', 'dark');
+    }
 }
-enableAutoGrow('.auto-grow');
+
+document.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+    }
+});
 function showpage(pageName) {
     const pages = document.querySelectorAll('.page');
     const body = document.body;
@@ -209,56 +394,23 @@ function showpage(pageName) {
     }
 
 }
-const nomeInput = document.getElementById('edit-nome');
-const emailInput = document.getElementById('edit-email');
-const telefoneInput = document.getElementById('edit-telefone');
-const matriculaInput = document.getElementById('edit-matricula');
-const funcaoInput = document.getElementById('edit-funcao');
-const saveButton = document.getElementById('btn-salvar');
-
-function carregarFormulario() {
-    nomeInput.value = localStorage.getItem('tecnico_nome') || "Nome do Técnico";
-    emailInput.value = localStorage.getItem('tecnico_email') || "tecnico.nome@fortes.com.br";
-    telefoneInput.value = localStorage.getItem('tecnico_telefone') || "(27) 99999-9999";
-
-    matriculaInput.value = localStorage.getItem('tecnico_matricula') || "12345";
-    funcaoInput.value = localStorage.getItem('tecnico_funcao') || "Técnico de Manutenção Sênior";
-}
-
-function salvarFormulario() {
-    localStorage.setItem('tecnico_nome', nomeInput.value);
-    localStorage.setItem('tecnico_email', emailInput.value);
-    localStorage.setItem('tecnico_telefone', telefoneInput.value);
-
-    localStorage.setItem('tecnico_matricula', matriculaInput.value);
-    localStorage.setItem('tecnico_funcao', funcaoInput.value);
-
-    localStorage.setItem('tecnico_setor', localStorage.getItem('tecnico_setor') || "Elétrica");
-    localStorage.setItem('tecnico_unidade', localStorage.getItem('tecnico_unidade') || "Matriz - Vitória");
-
-
-    alert('Perfil salvo com sucesso!');
-    window.location.href = '../tecnico/index.html';
-}
-
-
-carregarFormulario();
-if (saveButton) {
-    saveButton.addEventListener('click', salvarFormulario);
-}
-function darkModeToggle() {
-    if (document.body.classList.contains('dark-mode')) {
-        document.body.classList.remove('dark-mode');
-        localStorage.setItem('theme', 'light');
-    } else {
-        document.body.classList.add('dark-mode');
-        localStorage.setItem('theme', 'dark');
-    }
-}
-
+showpage('dashboard')
 document.addEventListener('DOMContentLoaded', () => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-        document.body.classList.add('dark-mode');
+    const noticiaForm = document.getElementById('noticia-form');
+
+    if (noticiaForm) {
+        noticiaForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const titulo = document.getElementById('noticia-titulo').value;
+
+            const conteudo = document.getElementById('noticia-conteudo').value;
+
+            alert(`Notícia "${titulo}" publicada com sucesso! (Simulação)`);
+
+            noticiaForm.reset();
+
+            window.location.href = '../Gestor/index.html';
+        });
     }
 });
