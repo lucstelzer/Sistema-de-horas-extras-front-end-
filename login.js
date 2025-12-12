@@ -10,19 +10,19 @@ document.addEventListener("DOMContentLoaded", () => {
             username: "tecnico",
             password: "123",
             role: "tecnico",
-            redirectTo: "../Tecnico/index.html"
+            redirectTo: "../Tecnico/tecnico.html"
         },
         {
             username: "encarregado",
             password: "456",
             role: "encarregado",
-            redirectTo: "../Encarregado/index.html"
+            redirectTo: "../Encarregado/encarregado.html"
         },
         {
             username: "gestor",
             password: "789",
             role: "gestor",
-            redirectTo: "../Gestor/index.html"
+            redirectTo: "../Gestor/gestor.html"
         }
     ];
 
