@@ -1,2 +1,2 @@
 # Sistema-de-horas-extras-front-end-
-Esse é um sistema de horas extras desenvolvido para um projeto na faculdade.
+Esse é um sistema de horas extras desenvolvido para um projeto na faculdade. Recebemos a problematica de uma empresa que precisava de um sistema para fazer o controle das horas extras da empresa. Para realizar o projeto, tivemos que criar três sistemas diferentes, visto que para cada cargo dentro da empresa, existia uma função diferente. Até o momento foi desenvolvido só a parte do front-end e também o banco de dados para armazenamento dos dados, porém ainda não foi feita a integração desse banco de dados com o site. 
