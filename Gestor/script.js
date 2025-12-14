@@ -3,7 +3,7 @@ document.getElementById('toggle-sidebar').addEventListener('click', function () 
 });
 function logout() {
     localStorage.removeItem('token');
-    window.location.href = '/Trabalho Fortes/Trabalho Fortes ENG/Login/index.html';
+    window.location.href = 'index.html';
 }
 
 document.getElementById('logout').addEventListener('click', logout);
